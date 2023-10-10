@@ -1,0 +1,22 @@
+Total_clientes = DISTINCTCOUNT( 'telecom_customer_churn - Base_Clientes'[Customer ID])
+
+Total_clientes_novos = CALCULATE(DISTINCTCOUNT(customer_churn[Customer ID]),customer_churn[Customer Status] = "Joined")
+
+Total_clientes_stay = CALCULATE(DISTINCTCOUNT(customer_churn[Customer ID]),customer_churn[Customer Status] = "Stayed")
+
+Total_churn = CALCULATE(DISTINCTCOUNT(customer_churn[Customer ID]),customer_churn[Customer Status] = "Churned")
+
+Total_receita = SUM('telecom_customer_churn - Base_Clientes'[Total Revenue])
+
+Total_receita_churn = CALCULATE(SUM('telecom_customer_churn - Base_Clientes'[Total Revenue]),customer_churn[Customer Status] = "Churned")
+
+Receita_perdida_churn = 
+var receita_clientes = [Total_receita]
+var prejuizo_churn = [Total_receita_churn]
+return DIVIDE(prejuizo_churn,receita_clientes)
+
+porc_churn = DIVIDE([Total_churn],[Total_clientes])
+
+Tempo_contrato = IF('telecom_customer_churn - Base_Clientes'[Tenure in Months] >= 1 && 'telecom_customer_churn - Base_Clientes'[Tenure in Months] <= 12, " Até 12 meses",
+IF('telecom_customer_churn - Base_Clientes'[Tenure in Months] >= 13 && 'telecom_customer_churn - Base_Clientes'[Tenure in Months] <= 24, "  Até 24 meses",
+IF('telecom_customer_churn - Base_Clientes'[Tenure in Months] >= 25 && 'telecom_customer_churn - Base_Clientes'[Tenure in Months] <= 36, "   Até 36 meses", "    Mais de 36 meses")))
